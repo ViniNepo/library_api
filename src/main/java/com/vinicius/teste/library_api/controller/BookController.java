@@ -1,7 +1,5 @@
 package com.vinicius.teste.library_api.controller;
 
-import com.vinicius.teste.library_api.apiExceptions.ApiErrors;
-import com.vinicius.teste.library_api.exceptions.BusinessExcepition;
 import com.vinicius.teste.library_api.model.dto.BookDto;
 import com.vinicius.teste.library_api.model.entities.Book;
 import com.vinicius.teste.library_api.service.BookService;
@@ -10,8 +8,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -72,19 +68,4 @@ public class BookController {
         Book book = bookService.getById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));;
         bookService.delete(book);
     }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiErrors handleValidationException(MethodArgumentNotValidException ex) {
-        BindingResult bindingResult = ex.getBindingResult();
-
-        return new ApiErrors(bindingResult);
-    }
-
-    @ExceptionHandler(BusinessExcepition.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiErrors handleBusinessException(BusinessExcepition ex) {
-        return new ApiErrors(ex);
-    }
-
 }
