@@ -1,13 +1,26 @@
 package com.vinicius.teste.library_api.model.entities;
 
+import lombok.Data;
+
+import javax.persistence.*;
 import java.time.LocalDate;
 
+@Data
+@Entity
 public class Loan {
 
+    @Id
+    @Column
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column
     private String customer;
+    @JoinColumn(name = "id_book")
+    @ManyToOne
     private Book book;
+    @Column
     private LocalDate loanDate;
+    @Column
     private Boolean returned;
 
     public Loan() {
