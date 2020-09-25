@@ -43,7 +43,7 @@ public class LoanController {
         Book book = bookService.getByIdIsbn(dto.getIsbn()).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Book not found"));
 
-        Loan entity = new Loan(null, "teste", book, LocalDate.now(), false);
+        Loan entity = new Loan(null, "teste", "teste@email.com", book, LocalDate.now(), false);
 
         entity = loanService.save(entity);
 

@@ -2,6 +2,7 @@ package com.vinicius.teste.library_api.service.impl;
 
 import com.vinicius.teste.library_api.exceptions.BusinessExcepition;
 import com.vinicius.teste.library_api.model.dto.LoanFilterDTO;
+import com.vinicius.teste.library_api.model.entities.Book;
 import com.vinicius.teste.library_api.model.entities.Loan;
 import com.vinicius.teste.library_api.repository.LoanRepository;
 import com.vinicius.teste.library_api.service.LoanService;
@@ -40,5 +41,10 @@ public class LoanServiceImpl implements LoanService {
     @Override
     public Page<Loan> find(LoanFilterDTO filterDTO, Pageable pageable) {
         return loanRepository.findByBookIsbnOrCustomer(filterDTO.getIsbn(), filterDTO.getCustomer(), pageable);
+    }
+
+    @Override
+    public Page<Loan> getLoansByBook(Book book, Pageable pageable) {
+        return loanRepository.findByBook(book, pageable);
     }
 }

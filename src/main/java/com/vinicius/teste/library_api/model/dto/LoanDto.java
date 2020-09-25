@@ -6,15 +6,17 @@ public class LoanDto {
     private String isbn;
     private String costumer;
     private BookDto book;
+    private String email;
 
     public LoanDto() {
     }
 
-    public LoanDto(Long id, String isbn, String costumer, BookDto book) {
+    public LoanDto(Long id, String isbn, String costumer, BookDto book, String email) {
         this.id = id;
         this.isbn = isbn;
         this.costumer = costumer;
         this.book = book;
+        this.email = email;
     }
 
     public Long getId() {
@@ -47,5 +49,13 @@ public class LoanDto {
 
     public void setBook(BookDto book) {
         this.book = book;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

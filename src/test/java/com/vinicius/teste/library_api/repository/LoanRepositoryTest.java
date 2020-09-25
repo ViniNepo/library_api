@@ -39,7 +39,7 @@ public class LoanRepositoryTest {
 
         entityManager.persist(book);
 
-        Loan loan = new Loan(null, "teste", book, LocalDate.now(), false);
+        Loan loan = new Loan(null, "teste", "teste@email.com", book, LocalDate.now(), false);
 
         entityManager.persist(loan);
 
@@ -56,7 +56,7 @@ public class LoanRepositoryTest {
 
         entityManager.persist(book);
 
-        Loan loan = new Loan(null, "teste", book, LocalDate.now(), false);
+        Loan loan = new Loan(null, "teste", "teste@email.com", book, LocalDate.now(), false);
 
         entityManager.persist(loan);
 

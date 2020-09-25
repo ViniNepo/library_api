@@ -15,6 +15,8 @@ public class Loan {
     private Long id;
     @Column
     private String customer;
+    @Column
+    private String email;
     @JoinColumn(name = "id_book")
     @ManyToOne
     private Book book;
@@ -26,9 +28,13 @@ public class Loan {
     public Loan() {
     }
 
-    public Loan(Long id, String customer, Book book, LocalDate loanDate, Boolean returned) {
+    public Loan(Long id, String customer,
+                String email, Book book,
+                LocalDate loanDate,
+                Boolean returned) {
         this.id = id;
         this.customer = customer;
+        this.email = email;
         this.book = book;
         this.loanDate = loanDate;
         this.returned = returned;
@@ -72,5 +78,13 @@ public class Loan {
 
     public void setReturned(Boolean returned) {
         this.returned = returned;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

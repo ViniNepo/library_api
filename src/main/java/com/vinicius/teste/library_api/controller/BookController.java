@@ -1,8 +1,11 @@
 package com.vinicius.teste.library_api.controller;
 
 import com.vinicius.teste.library_api.model.dto.BookDto;
+import com.vinicius.teste.library_api.model.dto.LoanDto;
 import com.vinicius.teste.library_api.model.entities.Book;
+import com.vinicius.teste.library_api.model.entities.Loan;
 import com.vinicius.teste.library_api.service.BookService;
+import com.vinicius.teste.library_api.service.LoanService;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -21,10 +24,12 @@ public class BookController {
 
     private ModelMapper modelMapper;
     private BookService bookService;
+    private LoanService loanService;
 
-    public BookController(BookService bookService, ModelMapper modelMapper) {
+    public BookController(BookService bookService, ModelMapper modelMapper, LoanService loanService) {
         this.bookService = bookService;
         this.modelMapper = modelMapper;
+        this.loanService = loanService;
     }
 
     @GetMapping("/{id}")
@@ -67,5 +72,20 @@ public class BookController {
     public void delete(@PathVariable Long id) {
         Book book = bookService.getById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));;
         bookService.delete(book);
+    }
+
+    @GetMapping("{id}/loans")
+    public Page<LoanDto> loanByBook(@PathVariable Long id, Pageable pageable) {
+        Book book = bookService.getById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        Page<Loan> result = loanService.getLoansByBook(book, pageable);
+        List<LoanDto> list = result.getContent().stream().map(loan -> {
+            Book loanBook = loan.getBook();
+            BookDto bookDto = modelMapper.map(loanBook, BookDto.class);
+            LoanDto loanDto = modelMapper.map(loan, LoanDto.class);
+            loanDto.setBook(bookDto);
+            return loanDto;
+        }).collect(Collectors.toList());
+
+        return new PageImpl<LoanDto>(list, pageable, result.getTotalElements());
     }
 }
