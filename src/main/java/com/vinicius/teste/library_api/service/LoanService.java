@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,5 +22,7 @@ public interface LoanService {
     Page<Loan> find(LoanFilterDTO filterDTO, Pageable pageable);
 
     Page<Loan> getLoansByBook(Book book, Pageable pageable);
+
+    List<Loan> getAllLoans();
 
 }
