@@ -6,6 +6,8 @@ import com.vinicius.teste.library_api.model.entities.Book;
 import com.vinicius.teste.library_api.model.entities.Loan;
 import com.vinicius.teste.library_api.service.BookService;
 import com.vinicius.teste.library_api.service.LoanService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/books")
+@Api("Book API")
 public class BookController {
 
     private ModelMapper modelMapper;
@@ -33,6 +36,7 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
+    @ApiOperation("Get by ID")
     public BookDto get(@PathVariable Long id) {
         return bookService
                 .getById(id)
@@ -41,6 +45,7 @@ public class BookController {
     }
 
     @GetMapping
+    @ApiOperation("Get all books")
     public Page<BookDto> find(BookDto dto, Pageable pageable) {
         Book filter = modelMapper.map(dto, Book.class);
         Page<Book> result = this.bookService.find(filter, pageable);
@@ -52,12 +57,14 @@ public class BookController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @ApiOperation("Create a book")
     public BookDto create(@RequestBody @Valid BookDto dto) {
         Book book = bookService.save(modelMapper.map(dto, Book.class));
         return modelMapper.map(book, BookDto.class);
     }
 
     @PutMapping("/{id}")
+    @ApiOperation("update a book")
     public BookDto update(@PathVariable Long id, BookDto dto) {
         return bookService.getById(id).map(book -> {
             book.setAuthor(dto.getAuthor());
@@ -69,12 +76,14 @@ public class BookController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ApiOperation("Delete a book by ID")
     public void delete(@PathVariable Long id) {
         Book book = bookService.getById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));;
         bookService.delete(book);
     }
 
     @GetMapping("{id}/loans")
+    @ApiOperation("Get loans by ID")
     public Page<LoanDto> loanByBook(@PathVariable Long id, Pageable pageable) {
         Book book = bookService.getById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         Page<Loan> result = loanService.getLoansByBook(book, pageable);

@@ -8,6 +8,8 @@ import com.vinicius.teste.library_api.model.entities.Book;
 import com.vinicius.teste.library_api.model.entities.Loan;
 import com.vinicius.teste.library_api.service.BookService;
 import com.vinicius.teste.library_api.service.LoanService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/loans")
+@Api("Loan API")
 public class LoanController {
 
     private LoanService loanService;
@@ -38,6 +41,7 @@ public class LoanController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @ApiOperation("Create a loan")
     public Long create(@RequestBody LoanDto dto) {
 
         Book book = bookService.getByIdIsbn(dto.getIsbn()).orElseThrow(
@@ -51,6 +55,7 @@ public class LoanController {
     }
 
     @PatchMapping("{id}")
+    @ApiOperation("Update loan by ID")
     public void returnBook(@PathVariable Long id, @RequestBody ReturnedLoanDTO dto) {
         Loan loan = loanService.getById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         loan.setReturned(dto.getReturned());
@@ -58,6 +63,7 @@ public class LoanController {
     }
 
     @GetMapping
+    @ApiOperation("Get all loans")
     public Page<LoanDto> find(LoanFilterDTO dto, Pageable pageRequest) {
         Page<Loan> result = loanService.find(dto, pageRequest);
         List<LoanDto> loans = result
