@@ -13,28 +13,29 @@ public class Loan {
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column
-    private String customer;
-    @Column
-    private String email;
+
+    @JoinColumn(name = "id customer")
+    @ManyToOne
+    private Customer customer;
+
     @JoinColumn(name = "id_book")
     @ManyToOne
     private Book book;
+
     @Column
     private LocalDate loanDate;
+
     @Column
     private Boolean returned;
 
     public Loan() {
     }
 
-    public Loan(Long id, String customer,
-                String email, Book book,
+    public Loan(Long id, Customer customer, Book book,
                 LocalDate loanDate,
                 Boolean returned) {
         this.id = id;
         this.customer = customer;
-        this.email = email;
         this.book = book;
         this.loanDate = loanDate;
         this.returned = returned;
@@ -48,11 +49,11 @@ public class Loan {
         this.id = id;
     }
 
-    public String getCustomer() {
+    public Customer getCustomer() {
         return customer;
     }
 
-    public void setCustomer(String customer) {
+    public void setCustomer(Customer customer) {
         this.customer = customer;
     }
 
@@ -80,11 +81,4 @@ public class Loan {
         this.returned = returned;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 }

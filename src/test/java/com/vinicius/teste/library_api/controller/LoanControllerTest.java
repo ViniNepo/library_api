@@ -8,6 +8,7 @@ import com.vinicius.teste.library_api.model.dto.LoanDto;
 import com.vinicius.teste.library_api.model.dto.LoanFilterDTO;
 import com.vinicius.teste.library_api.model.dto.ReturnedLoanDTO;
 import com.vinicius.teste.library_api.model.entities.Book;
+import com.vinicius.teste.library_api.model.entities.Customer;
 import com.vinicius.teste.library_api.model.entities.Loan;
 import com.vinicius.teste.library_api.service.BookService;
 import com.vinicius.teste.library_api.service.LoanService;
@@ -61,7 +62,7 @@ public class LoanControllerTest {
     public void createLoanTest() throws Exception {
 
         Book book = new Book(1L, "teste", "teste", "123");
-        Loan loan = new Loan(1L, "teste", "teste@email.com", book, LocalDate.now(), false);
+        Loan loan = new Loan(1L, new Customer(), book, LocalDate.now(), false);
         LoanDto dto = new LoanDto(1L, "123", "Carinha", new BookDto(), "teste@email.com");
         String json = new ObjectMapper().writeValueAsString(dto);
 
@@ -118,7 +119,7 @@ public class LoanControllerTest {
     @DisplayName("deve retornar um livro")
     public void returnBookTest() throws Exception {
         ReturnedLoanDTO dto = new ReturnedLoanDTO(true);
-        Loan loan = new Loan(1L, "teste", "teste@email.com", new Book(), LocalDate.now(), false);
+        Loan loan = new Loan(1L, new Customer(), new Book(), LocalDate.now(), false);
         String json = new ObjectMapper().writeValueAsString(dto);
 
         given(loanService.getById(anyLong())).willReturn(Optional.of(loan));
@@ -150,7 +151,7 @@ public class LoanControllerTest {
     @Test
     @DisplayName("Deve filtrar emprestimos")
     public void findLoanTest() throws Exception {
-        Loan loan = new Loan(1L, "teste", "teste@email.com", new Book(1L, "teste", "teste", "123"), LocalDate.now(), false);
+        Loan loan = new Loan(1L, new Customer(), new Book(1L, "teste", "teste", "123"), LocalDate.now(), false);
 
         given(loanService.find(any(LoanFilterDTO.class), any(Pageable.class)))
                 .willReturn(new PageImpl<Loan>(Arrays.asList(loan), PageRequest.of(0, 10), 1));

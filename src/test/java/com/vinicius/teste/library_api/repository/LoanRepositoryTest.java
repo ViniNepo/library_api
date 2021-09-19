@@ -1,6 +1,7 @@
 package com.vinicius.teste.library_api.repository;
 
 import com.vinicius.teste.library_api.model.entities.Book;
+import com.vinicius.teste.library_api.model.entities.Customer;
 import com.vinicius.teste.library_api.model.entities.Loan;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,7 +41,7 @@ public class LoanRepositoryTest {
 
         entityManager.persist(book);
 
-        Loan loan = new Loan(null, "teste", "teste@email.com", book, LocalDate.now(), false);
+        Loan loan = new Loan(null, new Customer(), book, LocalDate.now(), false);
 
         entityManager.persist(loan);
 
@@ -57,7 +58,7 @@ public class LoanRepositoryTest {
 
         entityManager.persist(book);
 
-        Loan loan = new Loan(null, "teste", "teste@email.com", book, LocalDate.now(), false);
+        Loan loan = new Loan(null, new Customer(), book, LocalDate.now(), false);
 
         entityManager.persist(loan);
 
@@ -77,7 +78,7 @@ public class LoanRepositoryTest {
 
         entityManager.persist(book);
 
-        Loan loan = new Loan(null, "teste", "teste@email.com", book, LocalDate.now().minusDays(5), false);
+        Loan loan = new Loan(null, new Customer(), book, LocalDate.now().minusDays(5), false);
 
         entityManager.persist(loan);
 
@@ -93,7 +94,7 @@ public class LoanRepositoryTest {
 
         entityManager.persist(book);
 
-        Loan loan = new Loan(null, "teste", "teste@email.com", book, LocalDate.now(), false);
+        Loan loan = new Loan(null, new Customer(), book, LocalDate.now(), false);
 
         entityManager.persist(loan);
 
