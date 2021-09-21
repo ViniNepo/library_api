@@ -3,6 +3,7 @@ package com.vinicius.teste.library_api.service;
 import com.vinicius.teste.library_api.exceptions.BusinessExcepition;
 import com.vinicius.teste.library_api.model.dto.LoanFilterDTO;
 import com.vinicius.teste.library_api.model.entities.Book;
+import com.vinicius.teste.library_api.model.entities.Customer;
 import com.vinicius.teste.library_api.model.entities.Loan;
 import com.vinicius.teste.library_api.repository.LoanRepository;
 import com.vinicius.teste.library_api.service.impl.LoanServiceImpl;
@@ -45,8 +46,8 @@ public class LoanServiceTest {
     @Test
     @DisplayName("deve salvar um emprestimo")
     public void saveLoan() {
-        Loan savingLoan = new Loan(null, "test", "teste@email.com", book, LocalDate.now(), false);
-        Loan savedLoan = new Loan(1L, "test", "teste@email.com", book, LocalDate.now(), false);
+        Loan savingLoan = new Loan(null, new Customer(), book, LocalDate.now(), false);
+        Loan savedLoan = new Loan(1L, new Customer(), book, LocalDate.now(), false);
 
         when(loanRepository.existsByBookNotReturned(book)).thenReturn(false);
         when(loanRepository.save(savingLoan)).thenReturn(savedLoan);
@@ -62,7 +63,7 @@ public class LoanServiceTest {
     @Test
     @DisplayName("deve dar erro ao salvar um livro emprestado")
     public void loanedBookTest() {
-        Loan savingLoan = new Loan(null, "test", "teste@email.com", book, LocalDate.now(), false);
+        Loan savingLoan = new Loan(null, new Customer(), book, LocalDate.now(), false);
 
         when(loanRepository.existsByBookNotReturned(book)).thenReturn(true);
 
@@ -77,7 +78,7 @@ public class LoanServiceTest {
     @DisplayName("Deve obter as informacoes de um emprestimo pelo ID")
     public void getLoanDetaisTest() {
         Long id = 1L;
-        Loan loan = new Loan(1L, "test", "teste@email.com", book, LocalDate.now(), false);
+        Loan loan = new Loan(1L, new Customer(), book, LocalDate.now(), false);
 
         when(loanRepository.findById(id)).thenReturn(Optional.of(loan));
 
@@ -94,7 +95,7 @@ public class LoanServiceTest {
     @Test
     @DisplayName("Deve atualizar o emprestimo")
     public void updateLoanTest() {
-        Loan loan = new Loan(1L, "test", "teste@email.com", book, LocalDate.now(), true);
+        Loan loan = new Loan(1L, new Customer(), book, LocalDate.now(), true);
 
         when(loanRepository.save(any(Loan.class))).thenReturn(loan);
 
@@ -109,7 +110,7 @@ public class LoanServiceTest {
     @DisplayName("deve filtrar um livro existente")
     public void findBookTest() {
         LoanFilterDTO loanFilterDTO = new LoanFilterDTO("123", "teste");
-        Loan loan = new Loan(1L, "test", "teste@email.com", book, LocalDate.now(), true);
+        Loan loan = new Loan(1L, new Customer(), book, LocalDate.now(), true);
         List<Loan> list = Arrays.asList(loan);
         PageRequest pageRequest = PageRequest.of(0, 10);
         Page<Loan> page = new PageImpl<>(list, pageRequest, list.size());

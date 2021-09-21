@@ -24,14 +24,14 @@ public class SchedulesService {
         this.emailService = emailService;
     }
 
-    @Scheduled(cron = CRON_LATE_LOANS)
-    public void sendEmailToLakeLoans() {
-        List<Loan> allLateLoans = loanService.getAllLoans();
-        List<String> list = allLateLoans.stream().map(
-                loans -> loans.getEmail()
-            ).collect(Collectors.toList());
-
-        emailService.sendMails(message, list);
-    }
+//    @Scheduled(cron = CRON_LATE_LOANS)
+//    public void sendEmailToLakeLoans() {
+//        List<Loan> allLateLoans = loanService.getAllLoans();
+//        List<String> list = allLateLoans.stream().map(
+//                loans -> loans.getCustomer().getEmail()
+//            ).collect(Collectors.toList());
+//
+//        emailService.sendMails(message, list);
+//    }
 
 }

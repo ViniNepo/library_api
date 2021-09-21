@@ -14,12 +14,12 @@ public class Loan {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn(name = "id customer")
     @ManyToOne
+    @JoinColumn(name = "id_customer")
     private Customer customer;
 
-    @JoinColumn(name = "id_book")
     @ManyToOne
+    @JoinColumn(name = "id_book")
     private Book book;
 
     @Column

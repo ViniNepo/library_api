@@ -24,14 +24,14 @@ public class LibraryApiApplication {
 		return new ModelMapper();
 	}
 
-	@Bean
-	public CommandLineRunner runner() {
-		return args -> {
-			List<String> emails = Arrays.asList("librarycurso-fe106f@inbox.mailtrap.io");
-			emailService.sendMails("testando", emails);
-			System.out.println("enviou");
-		};
-	}
+//	@Bean
+//	public CommandLineRunner runner() {
+//		return args -> {
+//			List<String> emails = Arrays.asList("librarycurso-fe106f@inbox.mailtrap.io");
+//			emailService.sendMails("testando", emails);
+//			System.out.println("enviou");
+//		};
+//	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(LibraryApiApplication.class, args);

@@ -5,6 +5,7 @@ import com.vinicius.teste.library_api.model.dto.LoanDto;
 import com.vinicius.teste.library_api.model.dto.LoanFilterDTO;
 import com.vinicius.teste.library_api.model.dto.ReturnedLoanDTO;
 import com.vinicius.teste.library_api.model.entities.Book;
+import com.vinicius.teste.library_api.model.entities.Customer;
 import com.vinicius.teste.library_api.model.entities.Loan;
 import com.vinicius.teste.library_api.service.BookService;
 import com.vinicius.teste.library_api.service.LoanService;
@@ -24,7 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/loans")
+@RequestMapping("/loans")
 @Api("Loan API")
 public class LoanController {
 
@@ -47,7 +48,7 @@ public class LoanController {
         Book book = bookService.getByIdIsbn(dto.getIsbn()).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Book not found"));
 
-        Loan entity = new Loan(null, "teste", "teste@email.com", book, LocalDate.now(), false);
+        Loan entity = new Loan(null, new Customer(), book, LocalDate.now(), false);
 
         entity = loanService.save(entity);
 
