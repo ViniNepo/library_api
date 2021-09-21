@@ -1,10 +1,13 @@
 package com.vinicius.teste.library_api.controller;
 
 import com.vinicius.teste.library_api.model.dto.BookDto;
+import com.vinicius.teste.library_api.model.dto.CustomerDto;
 import com.vinicius.teste.library_api.model.dto.LoanDto;
 import com.vinicius.teste.library_api.model.entities.Book;
+import com.vinicius.teste.library_api.model.entities.Customer;
 import com.vinicius.teste.library_api.model.entities.Loan;
 import com.vinicius.teste.library_api.service.BookService;
+import com.vinicius.teste.library_api.service.CustomerService;
 import com.vinicius.teste.library_api.service.LoanService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,75 +37,48 @@ import java.util.stream.Collectors;
 public class CustomerController {
 
     private ModelMapper modelMapper;
-    private BookService bookService;
+    private CustomerService customerService;
     private LoanService loanService;
 
-    public CustomerController(BookService bookService, ModelMapper modelMapper, LoanService loanService) {
-        this.bookService = bookService;
+    public CustomerController(CustomerService bookService, ModelMapper modelMapper, LoanService loanService) {
+        this.customerService = bookService;
         this.modelMapper = modelMapper;
         this.loanService = loanService;
     }
 
     @GetMapping("/{id}")
     @ApiOperation("Get by ID")
-    public BookDto get(@PathVariable Long id) {
-        return bookService
+    public CustomerDto get(@PathVariable Long id) {
+        return customerService
                 .getById(id)
-                .map(book -> modelMapper.map(book, BookDto.class))
+                .map(customer -> modelMapper.map(customer, CustomerDto.class))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-    }
-
-    @GetMapping
-    @ApiOperation("Get all books")
-    public Page<BookDto> find(BookDto dto, Pageable pageable) {
-        Book filter = modelMapper.map(dto, Book.class);
-        Page<Book> result = this.bookService.find(filter, pageable);
-        List<BookDto> list = result.getContent().stream()
-                .map(entity ->  modelMapper.map(entity, BookDto.class))
-                .collect(Collectors.toList());
-        return new PageImpl<BookDto>(list, pageable, result.getTotalElements());
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @ApiOperation("Create a book")
-    public BookDto create(@RequestBody @Valid BookDto dto) {
-        Book book = bookService.save(modelMapper.map(dto, Book.class));
-        return modelMapper.map(book, BookDto.class);
+    @ApiOperation("Create a customer")
+    public CustomerDto create(@RequestBody @Valid CustomerDto dto) {
+        Customer customer = customerService.save(modelMapper.map(dto, Customer.class));
+        return modelMapper.map(customer, CustomerDto.class);
     }
 
     @PutMapping("/{id}")
-    @ApiOperation("update a book")
+    @ApiOperation("update a customer")
     public BookDto update(@PathVariable Long id, BookDto dto) {
-        return bookService.getById(id).map(book -> {
-            book.setAuthor(dto.getAuthor());
-            book.setTitle(dto.getTitle());
-            book = bookService.update(book);
+        return customerService.getById(id).map(book -> {
+//            book.setAuthor(dto.getAuthor());
+//            book.setTitle(dto.getTitle());
+//            book = bookService.update(book);
             return modelMapper.map(book, BookDto.class);
         }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @ApiOperation("Delete a book by ID")
+    @ApiOperation("Delete a customer by ID")
     public void delete(@PathVariable Long id) {
-        Book book = bookService.getById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));;
-        bookService.delete(book);
-    }
-
-    @GetMapping("{id}/loans")
-    @ApiOperation("Get loans by ID")
-    public Page<LoanDto> loanByBook(@PathVariable Long id, Pageable pageable) {
-        Book book = bookService.getById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        Page<Loan> result = loanService.getLoansByBook(book, pageable);
-        List<LoanDto> list = result.getContent().stream().map(loan -> {
-            Book loanBook = loan.getBook();
-            BookDto bookDto = modelMapper.map(loanBook, BookDto.class);
-            LoanDto loanDto = modelMapper.map(loan, LoanDto.class);
-            loanDto.setBook(bookDto);
-            return loanDto;
-        }).collect(Collectors.toList());
-
-        return new PageImpl<LoanDto>(list, pageable, result.getTotalElements());
+        Customer customer = customerService.getById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));;
+        customerService.delete(customer);
     }
 }
