@@ -46,7 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class LoanControllerTest {
 
-    static final String LOAN_API = "/api/loans";
+    static final String LOAN_API = "/loans";
 
     @Autowired
     MockMvc mvc;

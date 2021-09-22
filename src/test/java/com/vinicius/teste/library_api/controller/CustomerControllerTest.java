@@ -3,12 +3,8 @@ package com.vinicius.teste.library_api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vinicius.teste.library_api.exceptions.BusinessExcepition;
 import com.vinicius.teste.library_api.model.dto.BookDto;
-import com.vinicius.teste.library_api.model.dto.CustomerDto;
-import com.vinicius.teste.library_api.model.entities.Address;
 import com.vinicius.teste.library_api.model.entities.Book;
-import com.vinicius.teste.library_api.model.entities.Contact;
-import com.vinicius.teste.library_api.model.entities.Customer;
-import com.vinicius.teste.library_api.service.CustomerService;
+import com.vinicius.teste.library_api.service.BookService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +21,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -34,7 +29,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -42,43 +39,41 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @WebMvcTest(controllers = BookController.class)
 @AutoConfigureMockMvc
-public class BookControllerTest {
+public class CustomerControllerTest {
 
-    static String CUSTOMER_API = "/customer";
+    static String BOOK_API = "/books";
 
     @Autowired
     MockMvc mvc;
 
     @MockBean
-    CustomerService service;
+    BookService service;
 
-    private Address createAddress() {
-        return new Address(1L, "5 avenue", 1, null, "Brazil", "Sao Paulo", "Sao Paulo", "02020000", new Customer());
-    }
-
-
-    private CustomerDto createNewCustomerDto() {
-        return new CustomerDto(null, "Joao", "Albulquerque", "11122233344", "11222333x", LocalDate.of(1997, 01, 01), "email@gmail.com", createAddress(), Arrays.asList(), Arrays.asList());
+    private BookDto createNewBookDto() {
+        return new BookDto(null, "title", "author", "001");
     }
 
     @Test
     @DisplayName("Deve criar um livro com sucesso")
     public void createBookTest() throws Exception {
 
-        CustomerDto customerDto = createNewCustomerDto();
-        Customer customer = new Customer();
-        given(service.save((any(Customer.class)))).willReturn(customer);
-        String json = new ObjectMapper().writeValueAsString(customerDto);
+        BookDto bookDto = createNewBookDto();
+        Book book = new Book(10L, "title", "author", "001");
+        given(service.save((any(Book.class)))).willReturn(book);
+        String json = new ObjectMapper().writeValueAsString(bookDto);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post(CUSTOMER_API)
+                .post(BOOK_API)
                 .contentType(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .content(json);
 
         mvc.perform(request)
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("id").isNotEmpty());
+                .andExpect(jsonPath("id").isNotEmpty())
+                .andExpect(jsonPath("title").value(bookDto.getTitle()))
+                .andExpect(jsonPath("author").value(bookDto.getAuthor()))
+                .andExpect(jsonPath("isbn").value(bookDto.getIsbn()));
     }
 
     @Test
@@ -88,7 +83,7 @@ public class BookControllerTest {
         String json = new ObjectMapper().writeValueAsString(new BookDto());
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post(CUSTOMER_API)
+                .post(BOOK_API)
                 .contentType(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .content(json);
@@ -102,13 +97,13 @@ public class BookControllerTest {
     @DisplayName("Deve lancar erro de validacao ao criar um livro com Isbm repetido")
     public void createBookWithRepeatIsbnTest() throws Exception {
 
-        String msg = "Usuario já cadastrado.";
-        CustomerDto dto = createNewCustomerDto();
+        String msg = "Isbn já cadastrado.";
+        BookDto dto = createNewBookDto();
         String json = new ObjectMapper().writeValueAsString(dto);
-        given(service.save(any(Customer.class))).willThrow(new BusinessExcepition(msg));
+        given(service.save(any(Book.class))).willThrow(new BusinessExcepition(msg));
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post(CUSTOMER_API)
+                .post(BOOK_API)
                 .contentType(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .content(json);
@@ -124,13 +119,16 @@ public class BookControllerTest {
     public void getBookDetailTest() throws Exception {
 
         Long id = 1L;
-        Customer customer = new Customer();
-        given(service.getById(id)).willReturn(Optional.of(customer));
+        Book book = new Book(1L, createNewBookDto().getTitle(), createNewBookDto().getAuthor(), createNewBookDto().getIsbn());
+        given(service.getById(id)).willReturn(Optional.of(book));
 
-        mvc.perform(get(CUSTOMER_API.concat("/" + id))
+        mvc.perform(get(BOOK_API.concat("/" + id))
                 .accept(APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(id));
+                .andExpect(jsonPath("id").value(id))
+                .andExpect(jsonPath("title").value(createNewBookDto().getTitle()))
+                .andExpect(jsonPath("author").value(createNewBookDto().getAuthor()))
+                .andExpect(jsonPath("isbn").value(createNewBookDto().getIsbn()));
     }
 
     @Test
@@ -139,7 +137,7 @@ public class BookControllerTest {
 
         given(service.getById(anyLong())).willReturn(Optional.empty());
 
-        mvc.perform(get(CUSTOMER_API.concat("/" + 1)))
+        mvc.perform(get(BOOK_API.concat("/" + 1)))
                 .andExpect(status().isNotFound());
     }
 
@@ -147,10 +145,10 @@ public class BookControllerTest {
     @DisplayName("deve deletar um livro")
     public void deleteBookTest() throws Exception {
 
-        Customer customer = new Customer();
-        given(service.getById(anyLong())).willReturn(Optional.of(customer));
+        Book book = new Book(1L, createNewBookDto().getTitle(), createNewBookDto().getAuthor(), createNewBookDto().getIsbn());
+        given(service.getById(anyLong())).willReturn(Optional.of(book));
 
-        mvc.perform(delete(CUSTOMER_API.concat("/" + 1L)))
+        mvc.perform(delete(BOOK_API.concat("/" + 1L)))
                 .andExpect(status().isNoContent());
     }
 
@@ -160,7 +158,7 @@ public class BookControllerTest {
 
         given(service.getById(anyLong())).willReturn(Optional.empty());
 
-        mvc.perform(delete(CUSTOMER_API.concat("/" + 1L)))
+        mvc.perform(delete(BOOK_API.concat("/" + 1L)))
                 .andExpect(status().isNotFound());
     }
 
@@ -169,34 +167,57 @@ public class BookControllerTest {
     public void updateBookTest() throws Exception {
 
         Long id = 1L;
-        String json = new ObjectMapper().writeValueAsString(createNewCustomerDto());
+        String json = new ObjectMapper().writeValueAsString(createNewBookDto());
 
-        Customer updateCustomer = new Customer();
-        given(service.getById(id)).willReturn(Optional.of(updateCustomer));
+        Book updateBook = new Book(1L, createNewBookDto().getTitle(), createNewBookDto().getAuthor(), createNewBookDto().getIsbn());
+        given(service.getById(id)).willReturn(Optional.of(updateBook));
 
-        Customer updatedCustomer = new Customer();
-        given(service.update(updateCustomer)).willReturn(updatedCustomer);
+        Book updatedBook = new Book(id, "teste", "teste", createNewBookDto().getIsbn());
+        given(service.update(updateBook)).willReturn(updatedBook);
 
-        mvc.perform(put(CUSTOMER_API.concat("/" + id))
+        mvc.perform(put(BOOK_API.concat("/" + id))
                 .accept(APPLICATION_JSON)
                 .content(json)
                 .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(id));
+                .andExpect(jsonPath("id").value(id))
+                .andExpect(jsonPath("title").value(updatedBook.getTitle()))
+                .andExpect(jsonPath("author").value(updatedBook.getAuthor()))
+                .andExpect(jsonPath("isbn").value(updatedBook.getIsbn()));
     }
 
     @Test
     @DisplayName("deve atualizar o livro quando encontrar na banco")
     public void updateBookNotFoundTest() throws Exception {
 
-        String json = new ObjectMapper().writeValueAsString(createNewCustomerDto());
+        String json = new ObjectMapper().writeValueAsString(createNewBookDto());
 
         given(service.getById(anyLong())).willReturn(Optional.empty());
 
-        mvc.perform(delete(CUSTOMER_API.concat("/" + 1))
+        mvc.perform(delete(BOOK_API.concat("/" + 1))
                 .accept(APPLICATION_JSON)
                 .content(json)
                 .contentType(APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("Deve encontrar um livro")
+    public void findBookTest() throws Exception {
+        Long id = 1L;
+        Book book = new Book(id, "teste", "teste", "123");
+
+        given(service.find(any(Book.class), any(Pageable.class)))
+                .willReturn(new PageImpl<Book>(Arrays.asList(book), PageRequest.of(0, 100), 1));
+
+        String queryString = String.format("?title=%s&author=%s&page=0&size=100", book.getTitle(), book.getAuthor());
+
+        mvc.perform(get(BOOK_API.concat(queryString))
+                .accept(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("content", hasSize(1)))
+                .andExpect(jsonPath("totalElements").value(1))
+                .andExpect(jsonPath("pageable.pageSize").value(100))
+                .andExpect(jsonPath("pageable.pageNumber").value(0));
     }
 }

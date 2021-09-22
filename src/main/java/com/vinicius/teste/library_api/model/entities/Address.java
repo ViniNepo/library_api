@@ -23,25 +23,40 @@ public class Address {
     private String street;
 
     @Column
-    private String number;
+    private Integer number;
 
     @Column
     private String complement;
 
     @Column
-    private LocalDate country;
+    private String country;
 
     @Column
     private String state;
 
     @Column
-    private LocalDate city;
+    private String city;
 
     @Column
-    private LocalDate zip;
+    private String zip;
 
     @OneToOne(mappedBy = "address")
     private Customer customer;
+
+    public Address() {
+    }
+
+    public Address(Long id, String street, Integer number, String complement, String country, String state, String city, String zip, Customer customer) {
+        this.id = id;
+        this.street = street;
+        this.number = number;
+        this.complement = complement;
+        this.country = country;
+        this.state = state;
+        this.city = city;
+        this.zip = zip;
+        this.customer = customer;
+    }
 
     public Long getId() {
         return id;
@@ -59,11 +74,11 @@ public class Address {
         this.street = street;
     }
 
-    public String getNumber() {
+    public Integer getNumber() {
         return number;
     }
 
-    public void setNumber(String number) {
+    public void setNumber(Integer number) {
         this.number = number;
     }
 
@@ -75,11 +90,11 @@ public class Address {
         this.complement = complement;
     }
 
-    public LocalDate getCountry() {
+    public String getCountry() {
         return country;
     }
 
-    public void setCountry(LocalDate country) {
+    public void setCountry(String country) {
         this.country = country;
     }
 
@@ -91,19 +106,19 @@ public class Address {
         this.state = state;
     }
 
-    public LocalDate getCity() {
+    public String getCity() {
         return city;
     }
 
-    public void setCity(LocalDate city) {
+    public void setCity(String city) {
         this.city = city;
     }
 
-    public LocalDate getZip() {
+    public String getZip() {
         return zip;
     }
 
-    public void setZip(LocalDate zip) {
+    public void setZip(String zip) {
         this.zip = zip;
     }
 }
